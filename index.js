@@ -8,6 +8,7 @@ import rechargeRouter from "./routes/recharge.js"
 import walletRouter from "./routes/wallet.js"
 import commissionRouter from "./routes/commission.js"
 import nsdlRouter from "./routes/nsdl.js"
+import utiRouter from "./routes/uti.js"
 import cors from "cors"
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/v1/recharge", rechargeRouter)
 app.use("/api/v1/wallet", walletRouter)
 app.use("/api/v1/commission", commissionRouter)
 app.use("/api/v1/nsdl", nsdlRouter)
+app.use("/api/v1/uti", utiRouter)
 
 
 

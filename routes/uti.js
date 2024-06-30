@@ -2,6 +2,9 @@ import express from "express"
 const router = express.Router()
 
 import axios from "axios"
+import { User } from "../models/Users.js";
+import { Commission } from "../models/Commison.js";
+import { UTI } from "../models/UTI.js";
 
 
 
@@ -9,5 +12,107 @@ import axios from "axios"
 
 
 router.post("/onboard/:user", async (req, res) => {
-    const service_cost = 100
+    try {
+        const service_cost = 100;
+        const partner = await User.findOne({ username: req.params.user })
+        const p_utirate = await Commission.findOne({ userId: req.params.user })
+
+        const activation_price = ~~service_cost + ~~p_utirate.uti
+
+        if (partner.wallet < activation_price) {
+            res.status(500).json({
+                success: false,
+                message: "Please Update Your Wallet"
+            })
+        } else {
+            const post_uti = await axios.post("https://panonlineservice.com/app/api/agent/onbording", {
+                token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+                name: partner.name,
+                agent_id: partner.username,
+                mobile: partner.mobile,
+                email_id: partner.email,
+                address: partner.address,
+                state: partner.state,
+                city: partner.state,
+                pincode: partner.pincode,
+                pan_no: partner.pan,
+                addhaar_no: partner.adhaar
+            }, { withCredentials: true })
+            if (post_uti.data.status === "Failed") {
+                await UTI.create({
+                    userId: partner.username,
+                    name: partner.name,
+                    agentId: partner.username,
+                    mobile: partner.mobile,
+                    email_id: partner.email,
+                    address: partner.address,
+                    state: partner.state,
+                    city: partner.city,
+                    pincode: partner.pincode,
+                    pan_no: partner.pan,
+                    addhaar_no: partner.adhaar,
+                    balance: partner.wallet,
+                    status: "Failure"
+                })
+                res.status(200).json({
+                    success: true,
+                    message: "Failed to submit the documents, please try again"
+                })
+            } else {
+                await partner.updateOne({ wallet: ~~partner.wallet - ~~activation_price });
+                await UTI.create({
+                    userId: partner.username,
+                    name: partner.name,
+                    agentId: partner.username,
+                    mobile: partner.mobile,
+                    email_id: partner.email,
+                    address: partner.address,
+                    state: partner.state,
+                    city: partner.city,
+                    pincode: partner.pincode,
+                    pan_no: partner.pan,
+                    addhaar_no: partner.adhaar,
+                    balance: partner.wallet,
+                    status: "Success"
+                })
+                await partner.updateOne({ utiactive: true })
+                res.status(200).json({
+                    success: true,
+                    message: "Submitted Successfully",
+                    response: post_uti.data
+                })
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
 })
+
+
+router.post("/utilogin/:user", async (req, res) => {
+    try {
+        const partner = await User.findOne({ username: req.params.user })
+        const uti_login = await axios.post("https://panonlineservice.com/app/api/uti/login", {
+            token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+            agent_id: partner.username,
+            req_type: "UAT"
+        }, { withCredentials: true })
+        const utipartner = await UTI.findOne({ userId: partner.username })
+        await utipartner.updateOne({ url: uti_login.data.url })
+        res.status(200).json({
+            success: true,
+            response: uti_login.data,
+            url: uti_login.data.url,
+            message: "Login Link has been Provided"
+        })
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
+
+
+
+
+
+export default router

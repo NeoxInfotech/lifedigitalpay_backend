@@ -38,6 +38,12 @@ const utiSchema = new mongoose.Schema({
     },
     balance: {
         type: String
+    },
+    status: {
+        type: String
+    },
+    url: {
+        type: String
     }
 }, { timestamps: true })
 
