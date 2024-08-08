@@ -54,7 +54,7 @@ router.post("/nsdlkyc/:user", async (req, res) => {
         const pan_res = await axios.post("https://panonlineservice.com/app/api/nsdl/request", {
             api_key: process.env.Nsdl_API_KEY,
             branch_code: user.username,
-            env_mode: "UAT", // “UAT” FOR TEST | “LIVE” FOR PRODUCTION
+            env_mode: "LIVE", // “UAT” FOR TEST | “LIVE” FOR PRODUCTION
             app_type: type, // “NEW” – NEW PAN | “CR” FOR CORRECTION PAN
             app_mode: mode, // “K” – FOR E-KYC | “E” – FOR SCAN BASE APPLICATION
             phyPanIsReq: need, // “Y” FOR Physical Pan Need | for e-Pan only “N”

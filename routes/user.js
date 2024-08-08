@@ -57,6 +57,43 @@ router.get("/allusers", async (req, res) => {
 
 })
 
+
+// *** DISTRIBUTORS ROUTES TO GET USERS THEY CREATED
+
+router.get("/distusers/:user", async (req, res) => {
+    try {
+        const distUsers = await User.find({ under: req.params.user })
+        res.status(201).json({
+            success: true,
+            message: distUsers
+        })
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
+
+
+
+// *** Activ or inactive a user through admin or distributor 
+router.post("/accountaction/:user", async (req, res) => {
+    const { activate } = req.body;
+    try {
+        const getuser = await User.findOne({ username: req.params.user })
+        await getuser.updateOne({ active: activate })
+        res.status(201).json({
+            success: true,
+            message: "Actions has been succesfully done"
+        })
+    } catch (error) {
+        res.status(500).json(error)
+        console.log(error)
+    }
+})
+
+
+
+
+
 // *Transfer Money to user
 
 router.post("/transfermoney/:user", async (req, res) => {
@@ -78,6 +115,7 @@ router.post("/transfermoney/:user", async (req, res) => {
 
     }
 })
+
 
 
 

@@ -4,6 +4,10 @@ const commissionSchema = new mongoose.Schema({
     userId: {
         type: String,
     },
+    slab: {
+        type: String,
+        default: "Default",
+    },
     vodafone: {
         type: Number,
         default: 2,
