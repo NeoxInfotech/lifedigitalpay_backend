@@ -66,7 +66,8 @@ router.post('/mobilerecharge/:id', async (req, res) => {
                     refid: response.data.id,
                     status: response.data.status,
                     userId: userdetail,
-                    txnId: response.data.tnx_id
+                    txnId: response.data.tnx_id,
+                    comm: commissionGiven,
 
                 })
                 await user.updateOne({ wallet: user.wallet - amount })

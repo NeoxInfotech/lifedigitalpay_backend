@@ -34,6 +34,9 @@ const rechargeSchema = new mongoose.Schema({
     txnId: {
         type: String,
     },
+    comm: {
+        type: Number
+    }
 }, { timestamps: true })
 
 

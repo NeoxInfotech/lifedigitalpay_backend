@@ -5,6 +5,7 @@ import axios from "axios"
 import { User } from "../models/Users.js";
 import { Commission } from "../models/Commison.js";
 import { UTI } from "../models/UTI.js";
+import { Wallet } from "../models/Wallet.js";
 
 
 
@@ -76,6 +77,7 @@ router.post("/onboard/:user", async (req, res) => {
                     status: "Success"
                 })
                 await partner.updateOne({ utiactive: true })
+                // TODO: Need to create a wallet here
                 res.status(200).json({
                     success: true,
                     message: "Submitted Successfully",
@@ -157,10 +159,10 @@ router.post("/onboardauser/:user", async (req, res) => {
                     balance: partner.wallet,
                     status: "Failure"
                 })
-                res.status(200).json({
+                res.status(500).json({
                     success: true,
                     message: "Failed to submit the documents, please try again",
-                    stat: post_uti.data,
+                    response: post_uti.data,
                 })
             } else {
                 await partner.updateOne({ wallet: ~~partner.wallet - ~~activation_price });
@@ -180,6 +182,16 @@ router.post("/onboardauser/:user", async (req, res) => {
                     status: "Success"
                 })
                 await partner.updateOne({ utiactive: true })
+                await Wallet.create({
+                    userdetails: partner.username,
+                    txntype: "UTI KYC Charge",
+                    amount: partner.wallet,
+                    opening: ~partner.wallet + ~activation_charge,
+                    closing: ~partner.wallet - ~activation_charge,
+                    comm: ~~activation_charge,
+                    status: "Success",
+                    details: "Sucessdully submitted"
+                })
                 res.status(200).json({
                     success: true,
                     message: "Submitted Successfully",
@@ -215,6 +227,24 @@ router.post("/utiloginuser/:agent", async (req, res) => {
     } catch (error) {
         res.status(500).json(error)
         console.log(error)
+    }
+})
+
+
+
+
+router.get("/utihistory/:user", async (req, res) => {
+    try {
+        const uti_kyc = await UTI.find({ userId: req.params.user })
+        res.status(200).json({
+            success: true,
+            response: uti_kyc
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            response: error,
+        })
     }
 })
 

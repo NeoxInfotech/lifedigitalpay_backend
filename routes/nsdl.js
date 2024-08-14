@@ -29,6 +29,7 @@ router.post("/activation/:user", async (req, res) => {
                 opening: service_charge,
                 closing: service_charge,
                 status: "Success",
+                comm: service_charge,
                 details: `${user.name},${user.acctype}, Your Nsdl Service has been activated`
 
             })
@@ -107,6 +108,7 @@ router.post("/nsdlkyc/:user", async (req, res) => {
                     opening: user.wallet,
                     closing: ~~user.wallet - ~~nsdlfee,
                     status: "Success",
+                    comm: ~~nsdlfee,
                     details: "",
                 })
                 console.log(pan_res.data)
