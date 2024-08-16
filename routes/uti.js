@@ -27,7 +27,7 @@ router.post("/onboard/:user", async (req, res) => {
             })
         } else {
             const post_uti = await axios.post("https://panonlineservice.com/app/api/agent/onbording", {
-                token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+                token: process.env.UTI_API_TOKEN,
                 name: partner.name,
                 agent_id: partner.username,
                 mobile: partner.mobile,
@@ -97,7 +97,7 @@ router.post("/utilogin/:user", async (req, res) => {
     try {
         const partner = await User.findOne({ username: req.params.user })
         const uti_login = await axios.post("https://panonlineservice.com/app/api/uti/login", {
-            token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+            token: process.env.UTI_API_TOKEN,
             agent_id: partner.username,
             req_type: "UAT"
         }, { withCredentials: true })
@@ -131,7 +131,7 @@ router.post("/onboardauser/:user", async (req, res) => {
             })
         } else {
             const post_uti = await axios.post("https://panonlineservice.com/app/api/agent/onbording", {
-                token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+                token: process.env.UTI_API_TOKEN,
                 name: name,
                 agent_id: order,
                 mobile: mobile,
@@ -213,7 +213,7 @@ router.post("/utiloginuser/:agent", async (req, res) => {
     try {
         const partner = await UTI.findOne({ agentId: req.params.agent })
         const uti_login = await axios.post("https://panonlineservice.com/app/api/uti/login", {
-            token: "QVQxNzE1Njc5NzQ5MzAyNDQ2NzA5",
+            token: process.env.UTI_API_TOKEN,
             agent_id: partner.agentId,
             req_type: "UAT"
         }, { withCredentials: true })

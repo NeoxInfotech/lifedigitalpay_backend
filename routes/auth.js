@@ -149,7 +149,7 @@ router.post("/transaction/:id", async (req, res) => {
         const user = await User.findOne({ _id: req.params.id })
         const orderid = "ORD" + (Math.floor(Math.random() * (900000000 - 1000000 + 1)) + 1000000).toString();
         const paymentorder = await axios.post("https://allapi.in/order/create", {
-            token: "497d0c-fbbaad-dae6a8-1ed3e8-be67ac",
+            token: process.env.PAYMENT_TOKEN,
             order_id: orderid,
             product_name: "Random",
             txn_amount: amount,
@@ -184,7 +184,7 @@ router.post("/registerpay/:id", async (req, res) => {
     try {
         const { utr, orderid } = req.body
         const resp = await axios.post("https://allapi.in/order/status", {
-            token: "497d0c-fbbaad-dae6a8-1ed3e8-be67ac",
+            token: process.env.PAYMENT_TOKEN,
             order_id: orderid,
         }, { withCredentials: true })
         const utrres = resp.data.results.utr_number
